@@ -1,0 +1,65 @@
+using System;
+class FloydAlgorithm
+{
+    static void Main()
+    {
+       
+        Console.WriteLine("Введите количество вершин матрицы: ");
+        int m = int.Parse(Console.ReadLine());
+        int[,] matr = new int[m, m];
+        int b = 1;
+        Console.WriteLine("Введите элементы матрицы: ");
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                matr[i, j] = int.Parse(Console.ReadLine());
+            }
+        }
+        Console.Clear();
+        Console.WriteLine("Исходная матрица: ");
+        for (int y = 0; y < m; y++)
+        {
+            for (int x = 0; x < m; x++)
+            {
+                Console.Write(matr[y, x] + "\t");
+                if (b == m)
+                {
+                    Console.WriteLine(" ");
+                    b = 0;
+                }
+                b += 1;
+            }
+        }
+        for (int k = 0; k < m; k++)
+        {
+            for (int i = 0; i < m; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    if (matr[i, k] != 0 && matr[k, j] != 0)
+                    {
+                        if (matr[i, j] == 0 || matr[i, j] > matr[i, k] + matr[k, j])
+                        {
+                            matr[i, j] = matr[i, k] + matr[k, j];
+                        }
+                        if (i == j)
+                        {
+                            matr[i, j] = 0;
+                        }
+                    }
+                }
+            }
+        }
+        Console.WriteLine("Матрица кратчайших путей:");
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                Console.Write(matr[i, j] + "\t");
+            }
+            Console.WriteLine();
+        }
+    }
+}
+
