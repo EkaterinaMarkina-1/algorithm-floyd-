@@ -1,0 +1,75 @@
+using System;
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Введите количество вершин: ");
+        int n = int.Parse(Console.ReadLine());
+        int[,] matr = new int[n, n];
+        int b = 1;
+        Console.WriteLine("Введите элементы матрицы: ");
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                int v = int.Parse(Console.ReadLine());
+                if (v < 0)
+                {
+                    Console.WriteLine("Ошибка: матрица не должна содержать отрицательные числа");
+                    return;
+                }
+                matr[i, j] = v;
+            }
+        }
+        Console.Clear();
+        Console.WriteLine("Исходная матрица: ");
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                Console.Write(matr[i,j] + " ");
+                if (b == n)
+                {
+                    Console.WriteLine();
+                    b = 0;
+                }
+                b += 1;
+            }
+        }
+        int[] rast = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            rast[i] = int.MaxValue;
+        }
+        rast[0] = 0;
+        for (int i = 0; i < n - 1; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                for (int k = 0; k < n; k++)
+                {
+                    if (matr[j, k] != 0 && rast[j] != int.MaxValue && rast[j] + matr[j, k] < rast[k])
+                    {
+                        rast[k] = rast[j] + matr[j, k];
+                    }
+                }
+            }
+        } 
+        Console.WriteLine("Кратчайшее расстояние от вершины 0 :");
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < 1; j++)
+            {
+                if (rast[i] == int.MaxValue)
+                {
+                    Console.Write("inf ");
+                }
+                else
+                {
+                    Console.Write("{0} -> {1}", i, rast[i]);
+                }
+            }
+            Console.WriteLine();
+        }
+    }
+}
