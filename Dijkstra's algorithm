@@ -1,0 +1,108 @@
+using System;
+using System.Text;
+using System.IO;
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Введите количество вершин: ");
+        int n = int.Parse(Console.ReadLine());
+        int[,] matr = new int[n, n];
+        int b = 1;
+        Console.WriteLine("Введите элементы матрицы: ");
+        using (StreamReader sr = new StreamReader(@"C:\Users\Екатерина\Desktop\file 1.txt", Encoding.UTF8))
+        {
+            Console.WriteLine("Содержимое файла: ");
+            for (int i = 0; i < n; i++)
+            {
+                string[] l = sr.ReadLine().Split(' ');
+                for (int j = 0; j < n; j++)
+                {
+                    int v = int.Parse(l[j]);
+                    if (v < 0)
+                    {
+                        Console.WriteLine("Ошибка: матрица не должна содержать отрицательные числа");
+                        return;
+                    }
+                    matr[i, j] = v;
+                }
+            }
+        }
+        Console.Clear();
+        Console.WriteLine("Исходная матрица: ");
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                Console.Write(matr[i, j] + " ");
+                if (b == n)
+                {
+                    Console.WriteLine();
+                    b = 0;
+                }
+                b += 1;
+            }
+        }
+        Console.Write("Введите начальную вершину: ");
+        int versh_1 = int.Parse(Console.ReadLine());
+
+        Console.Write("Введите конечную вершину: ");
+        int versh_2 = int.Parse(Console.ReadLine());
+
+        int[] rast = new int[n]; 
+
+        for (int i = 0; i < n; i++)
+        {
+            rast[i] = int.MaxValue;
+        }
+
+        rast[versh_1] = 0;
+
+        for (int i = 0; i < n - 1; i++) 
+        {
+            int minRast = int.MaxValue;
+            int min_n = -1;
+
+
+            for (int j = 0; j < n; j++)
+            {
+                if (rast[j] < minRast && rast[j] != -1)
+                {
+                    minRast = rast[j];
+                    min_n = j;
+                }
+            }
+
+            if (min_n == -1) break; 
+
+            rast[min_n] = -1; 
+            for (int j = 0; j < n; j++)
+            {
+                if (matr[min_n, j] != 0 && matr[min_n, j] != int.MaxValue) 
+                {
+                    int newDistance = minRast + matr[min_n, j];
+                    if (newDistance < rast[j])
+                    {
+                        rast[j] = newDistance;
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine($"Кратчайшее расстояние от вершины {versh_1} до вершины {versh_2}: {rast[versh_2]}");
+    }
+}
+
+//Входной файл:
+//0 7 0 0 9 2 0 0 0 0 0 0
+//7 0 5 4 8 2 0 0 0 0 0 0
+//0 5 0 2 9 0 0 0 0 0 0 0
+//0 4 2 0 3 0 8 3 0 0 0 0
+//9 8 9 3 0 3 5 1 7 0 0 0
+//2 2 0 0 3 0 0 6 1 0 0 0
+//0 0 0 8 5 0 0 6 0 4 4 0
+//0 0 0 3 1 6 6 0 2 7 8 5
+//0 0 0 0 7 1 0 2 0 0 6 1
+//0 0 0 0 0 0 4 7 0 0 10 0
+//0 0 0 0 0 0 4 8 6 10 0 3
+//0 0 0 0 0 0 0 5 1 0 3 0
