@@ -1,0 +1,93 @@
+using System;
+using System.IO;
+using System.Text;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Введите количество вершин: ");
+        int n = int.Parse(Console.ReadLine());
+        int[,] matr = new int[n, n];
+        int b = 1;
+        Console.WriteLine("Введите элементы матрицы: ");
+        using (StreamReader sr = new StreamReader(@"C:\Users\Екатерина\Desktop\file 1.txt", Encoding.UTF8))
+        {
+            Console.WriteLine("Содержимое файла: ");
+            for (int i = 0; i < n; i++)
+            {
+                string[] l = sr.ReadLine().Split(' ');
+                for (int j = 0; j < n; j++)
+                {
+                    int v = int.Parse(l[j]);
+                    if (v < 0)
+                    {
+                        Console.WriteLine("Ошибка: матрица не должна содержать отрицательные числа");
+                        return;
+                    }
+                    matr[i, j] = v;
+                }
+            }
+        }
+        Console.Clear();
+        Console.WriteLine("Исходная матрица: ");
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                Console.Write(matr[i, j] + " ");
+                if (b == n)
+                {
+                    Console.WriteLine();
+                    b = 0;
+                }
+                b += 1;
+            }
+        }
+        int k = n; 
+        int[] versh = new int[k]; 
+        int[] rast = new int[k];
+        int[] pr_versh = new int[k];
+        for (int i = 0; i < k; i++)
+        {
+            versh[i] = 0;
+            rast[i] = int.MaxValue;
+            pr_versh[i] = -1;
+        }
+        int start = 0;
+        rast[start] = 0;
+        for (int i = 0; i < k; i++)
+        {
+            int v = -1;
+            for (int j = 0; j < k; j++)
+            {
+                if (versh[j] == 0 && (v == -1 || rast[j] < rast[v]))
+                {
+                    v = j;
+                }
+            }
+            versh[v] = 1;
+            for (int j = 0; j < k; j++)
+            {
+                if (matr[v, j] > 0)
+                {
+                    int u = j;
+                    int weight = matr[v, j];
+                    if (versh[u] == 0 && weight < rast[u])
+                    {
+                        rast[u] = weight;
+                        pr_versh[u] = v;
+                    }
+                }
+            }
+        }
+        Console.WriteLine("Подбор минимальных рёбер, проходящих через все вершины:");
+        int z = 0;
+        for (int i = 1; i < k; i++)
+        {
+            Console.WriteLine("Ребро " + (i + 1) + ": " + (pr_versh[i] + 1) + " -> " + (i + 1) + ", вес = " + rast[i]);
+            z+= rast[i];
+        }
+        Console.WriteLine("Сумма минимальных весов рёбер = " + z);
+    }
+}
