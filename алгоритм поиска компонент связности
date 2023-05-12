@@ -1,0 +1,61 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+class ConnectedComponents
+{
+    static void Main(string[] args)
+    {
+        using (StreamReader sr = new StreamReader(@"C:\Users\Екатерина\Desktop\file 1.txt", Encoding.UTF8))
+        {
+            int n = int.Parse(sr.ReadLine());
+            List<int>[] adjList = new List<int>[n];
+            for (int i = 0; i < n; i++)
+            {
+                adjList[i] = new List<int>();
+                string[] line = sr.ReadLine().Split();
+                for (int j = 0; j < n; j++)
+                {
+                    if (int.Parse(line[j]) == 1)
+                    {
+                        adjList[i].Add(j);
+                    }
+                }
+            }
+            bool[] visited = new bool[n];
+            int count = 0;
+
+            for (int i = 0; i < n; i++)
+            {
+                if (!visited[i])
+                {
+                    Alg(adjList, visited, i);
+                    count++;
+                }
+            }
+
+            Console.WriteLine("Количество компонент связности: " + count);
+        }
+    }
+    static void Alg(List<int>[] adjList, bool[] visited, int versh)
+    {
+        visited[versh] = true;
+
+        foreach (int k in adjList[versh])
+        {
+            if (!visited[k])
+            {
+                Alg(adjList, visited, k);
+            }
+        }
+    }
+}
+
+
+//Заполнение файла:
+//5
+//0 1 1 0 0
+//1 0 1 0 0
+//1 1 0 0 0
+//0 0 0 0 1
+//0 0 0 1 0
