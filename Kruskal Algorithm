@@ -1,0 +1,99 @@
+using System;
+using System.IO;
+using System.Text;
+using System.Collections.Generic;
+
+class Reb
+{
+    public int v_1, v_2, ves;
+    public Reb(int v_1, int v_2, int ves)
+    {
+        this.v_1 = v_1;
+        this.v_2 = v_2;
+        this.ves = ves;
+    }
+}
+class Graph
+{
+    private int V;
+    private List<Reb> reb;
+    private int[] versh;
+    public Graph(int V)
+    {
+        this.V = V;
+        reb = new List<Reb>();
+        versh = new int[V];
+        for (int i = 0; i < V; i++)
+        {
+            versh[i] = i;
+        }
+    }
+    public void AddEdge(int v_1, int v_2, int weight)
+    {
+        reb.Add(new Reb(v_1, v_2, weight));
+    }
+    public void Kruskal()
+    {
+        using (StreamReader sr = new StreamReader(@"C:\Users\Екатерина\Desktop\file 1.txt", Encoding.UTF8))
+        {
+            for (int i = 0; i < V; i++)
+            {
+                string[] parts = sr.ReadLine().Split(' ');
+                for (int j = 0; j < parts.Length; j++)
+                {
+                    if (parts[j] != "0" && j > i)
+                    {
+                        int ves = int.Parse(parts[j]);
+                        reb.Add(new Reb(i, j, ves));
+                    }
+                }
+            }
+        }
+
+        reb.Sort((a, b) => a.ves.CompareTo(b.ves));
+        List<Reb> mst = new List<Reb>();
+        foreach (Reb e in reb)
+        {
+            int x = e.v_1;
+            int y = e.v_2;
+            while (versh[x] != x) x = versh[x];
+            while (versh[y] != y) y = versh[y];
+            if (x != y)
+            {
+                mst.Add(e);
+                versh[x] = y;
+            }
+        }
+        int totalWeight = 0;
+        foreach (Reb e in mst)
+        {
+            totalWeight += e.ves;
+        }
+        Console.WriteLine("Общий вес минимального остовного дерева: {0}", totalWeight);
+    }
+}
+class Program
+{
+    static void Main(string[] args)
+    {
+        using (StreamReader sr = new StreamReader(@"C:\Users\Екатерина\Desktop\file 1.txt", Encoding.UTF8))
+        {
+            int V = int.Parse(sr.ReadLine());
+            Graph g = new Graph(V);
+            string l;
+            for (int i = 0; i < V; i++)
+            {
+                l = sr.ReadLine();
+                string[] parts = l.Split(' ');
+                for (int j = 0; j < V; j++)
+                {
+                    if (parts[j] != "0")
+                    {
+                        g.AddEdge(i, j, int.Parse(parts[j]));
+                    }
+                }
+            }
+            g.Kruskal();
+        }
+    }
+}
