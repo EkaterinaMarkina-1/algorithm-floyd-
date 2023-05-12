@@ -1,0 +1,95 @@
+using System;
+using System.IO;
+using System.Text;
+
+class Program
+{
+    static int[,] mass;
+
+    static void Main(string[] args)
+    {
+        using (StreamReader sr = new StreamReader(@"C:\Users\Екатерина\Desktop\file 1.txt", Encoding.UTF8))
+        {
+            int n = int.Parse(sr.ReadLine());
+            mass = new int[n, n];
+
+            for (int i = 0; i < n; i++)
+            {
+                string[] line = sr.ReadLine().Split(' ');
+                for (int j = 0; j < n; j++)
+                {
+                    mass[i, j] = int.Parse(line[j]);
+                }
+            }
+
+            int[] pyt = Komm(n);
+            Console.WriteLine("Длина кратчайшего пути: " + Dlina_pyt(pyt));
+        }
+    }
+    static int[] Komm(int n)
+    {
+        int[] pyt = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            pyt[i] = i;
+        }
+
+        int[] cratch_pyt = new int[n];
+        Array.Copy(pyt, cratch_pyt, n);
+
+        int pyt_seichas = Dlina_pyt(pyt);
+        int cratch_dlina_pyt = pyt_seichas;
+
+        while (Sled_put(pyt))
+        {
+            pyt_seichas = Dlina_pyt(pyt);
+            if (pyt_seichas < cratch_dlina_pyt)
+            {
+                cratch_dlina_pyt = pyt_seichas;
+                Array.Copy(pyt, cratch_pyt, n);
+            }
+        }
+
+        return cratch_pyt;
+    }
+
+    static int Dlina_pyt(int[] pyt)
+    {
+        int dlina_pyt = 0;
+        for (int i = 0; i < pyt.Length - 1; i++)
+        {
+            dlina_pyt += mass[pyt[i], pyt[i + 1]];
+        }
+        dlina_pyt += mass[pyt[pyt.Length - 1], pyt[0]];
+        return dlina_pyt;
+    }
+
+    static bool Sled_put(int[] mass)
+    {
+        int i = mass.Length - 2;
+        while (i >= 0 && mass[i] >= mass[i + 1])
+        {
+            i--;
+        }
+        if (i < 0)
+        {
+            return false;
+        }
+
+        int j = mass.Length - 1;
+        while (mass[j] <= mass[i])
+        {
+            j--;
+        }
+
+        Zamena(mass, i, j);
+        Array.Reverse(mass, i + 1, mass.Length - i - 1);
+        return true;
+    }
+    static void Zamena(int[] mass, int i, int j)
+    {
+        int t = mass[i];
+        mass[i] = mass[j];
+        mass[j] = t;
+    }
+}
