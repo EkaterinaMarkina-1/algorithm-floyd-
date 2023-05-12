@@ -1,0 +1,78 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+class Program
+{
+    private int[,] graph; 
+    private int[] hran_put; 
+    private int kol_versh; 
+    public static void Main(string[] args)
+    {
+        string filePath = @"C:\Users\Екатерина\Desktop\file 1.txt";
+        Program program = new Program(); 
+
+        using (StreamReader sr = new StreamReader(filePath, Encoding.UTF8))
+        {
+            program.kol_versh = int.Parse(sr.ReadLine()); 
+            program.graph = new int[program.kol_versh, program.kol_versh]; 
+
+            for (int i = 0; i < program.kol_versh; i++)
+            {
+                string[] line = sr.ReadLine().Split(); 
+
+                for (int j = 0; j < program.kol_versh; j++)
+                {
+                    program.graph[i, j] = int.Parse(line[j]);
+                }
+            }
+            int istok = 0; 
+            int stok = program.kol_versh - 1; 
+            int maxFlow = 0; 
+            program.hran_put = new int[program.kol_versh];
+
+            while (program.Falkerson(istok, stok)) 
+            {
+                int pathFlow = int.MaxValue;  
+                for (int v = stok; v != istok; v = program.hran_put[v])
+                {
+                    int u = program.hran_put[v];
+                    pathFlow = Math.Min(pathFlow, program.graph[u, v]);
+                }
+                for (int v = stok; v != istok; v = program.hran_put[v])
+                {
+                    int u = program.hran_put[v];
+                    program.graph[u, v] -= pathFlow;
+                    program.graph[v, u] += pathFlow;
+                }
+                maxFlow += pathFlow; 
+            }
+            Console.WriteLine("Максимальный поток: {0}", maxFlow);
+        }
+    }
+    private bool Falkerson(int istok, int stok)
+    {
+        bool[] visited = new bool[kol_versh]; 
+        Queue<int> och = new Queue<int>(); 
+
+        och.Enqueue(istok);
+        visited[istok] = true;
+        hran_put[istok] = -1;
+
+        while (och.Count > 0)
+        {
+            int u = och.Dequeue();
+
+            for (int v = 0; v < kol_versh; v++)
+            {
+                if (!visited[v] && graph[u, v] > 0)
+                {
+                    och.Enqueue(v);
+                    visited[v] = true;
+                    hran_put[v] = u;
+                }
+            }
+        }
+        return visited[stok]; 
+    }
+}
